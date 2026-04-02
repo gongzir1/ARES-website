@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARES: Scalable and Practical Gradient Inversion Attack in Federated Learning through Activation Recovery
+    </title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        .overview-img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+        }
+
+        .overview-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+    </style>
+
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/js/bulma-slider.min.js"></script>
+    <script defer src="js/index.js"></script>
+</head>
+
+<body>
+
+    <main id="main-content">
+        <section class="hero">
+            <div class="hero-body">
+                <div class="container is-max-desktop">
+                    <div class="columns is-centered">
+                        <div class="column has-text-centered">
+                            <h1 class="title is-1 publication-title">ARES: Scalable and Practical Gradient Inversion
+                                Attack in Federated Learning through Activation Recovery</h1>
+                            <div class="is-size-5 publication-authors" style="margin-bottom: 1rem;">
+                                <span class="author-block">Zirui Gong<sup>1</sup>, Leo Yu Zhang<sup>1, *</sup>, Yanjun
+                                    Zhang<sup>1</sup>, Viet Vo<sup>2</sup>, Tianqing Zhu<sup>3</sup>, Shirui
+                                    Pan<sup>1</sup>, Cong Wang<sup>4</sup></span>
+                            </div>
+
+                            <div class="is-size-5 publication-authors" style="margin-bottom: 2rem;">
+                                <span class="author-block"><sup>1</sup>Griffith University, <sup>2</sup>Swinburne
+                                    University of Technology,<br><sup>3</sup>City University of Macau, <sup>4</sup>City
+                                    University of Hong Kong</span>
+                                <span class="eql-cntrb"><small><br><sup>*</sup>Corresponding Author</small></span>
+                            </div>
+
+                            <div class="column has-text-centered">
+                                <div class="publication-links">
+                                    <span class="link-block">
+                                        <a href="https://arxiv.org/abs/2603.17623"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                                            <span>Paper</span>
+                                        </a>
+                                    </span>
+                                    <span class="link-block">
+                                        <a href="https://github.com/gongzir1/ARES"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon"><i class="fab fa-github"></i></span>
+                                            <span>Code</span>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section hero is-light">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-four-fifths">
+                        <h2 class="title is-3">Abstract</h2>
+                        <div class="content has-text-justified">
+                            <p>
+                                Federated Learning (FL) enables collaborative model training by sharing model updates
+                                instead of raw data, aiming to protect user privacy. However, recent studies reveal that
+                                these shared updates can inadvertently leak sensitive training data through gradient
+                                inversion attacks (GIAs). Among them, active GIAs are particularly powerful, enabling
+                                high-fidelity reconstruction of individual samples even under large batch sizes.
+                                Nevertheless, existing approaches often require architectural modifications, which limit
+                                their practical applicability. In this work, we bridge this gap by introducing the
+                                Activation REcovery via Sparse inversion (ARES) attack, an active GIA designed to
+                                reconstruct training samples from large training batches without requiring architectural
+                                modifications. Specifically, we formulate the recovery problem as a noisy sparse
+                                recovery task and solve it using the generalized Least Absolute Shrinkage and Selection
+                                Operator (Lasso). To extend the attack to multi-sample recovery, ARES incorporates the
+                                imprint method to disentangle activations, enabling scalable per-sample reconstruction.
+                                We further establish the expected recovery rate and derive an upper bound on the
+                                reconstruction error, providing theoretical guarantees for the ARES attack. Extensive
+                                experiments on CNNs and MLPs demonstrate that ARES achieves high-fidelity reconstruction
+                                across diverse datasets, significantly outperforming prior GIAs under large batch sizes
+                                and realistic FL settings. Our results highlight that intermediate activations pose a
+                                serious and underestimated privacy risk in FL, underscoring the urgent need for stronger
+                                defenses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Extracted Results Highlights -->
+        <section class="hero is-small">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="title is-3 has-text-centered">Key Features</h2>
+                    <div class="columns is-centered" style="margin-top: 2rem;">
+                        <div class="column is-one-third has-text-centered">
+                            <h3 class="title is-5">Zero Architectural Modifications</h3>
+                            <p>Unlike prior active GIAs, ARES scales to realistic large batch sizes without requiring
+                                clients to deploy a specially designed network structure.</p>
+                        </div>
+                        <div class="column is-one-third has-text-centered">
+                            <h3 class="title is-5">7× Improvement in PSNR</h3>
+                            <p>Achieves high-fidelity reconstruction across diverse datasets (images, text, and audio),
+                                significantly outperforming state-of-the-art attacks.</p>
+                        </div>
+                        <div class="column is-one-third has-text-centered">
+                            <h3 class="title is-5">Theoretical Recovery Guarantee</h3>
+                            <p>Formulates the inversion as a noisy sparse recovery problem, establishing expected
+                                recovery rates and an upper bound on reconstruction error.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Statement -->
+        <section class="section">
+            <div class="container is-max-desktop">
+                <h2 class="title is-3 has-text-centered" style="margin-bottom: 2rem;">Problem Statement</h2>
+                <div class="columns is-vcentered">
+                    <div class="column is-two-fifths">
+                        <img src="images/problem.png" alt="ARES Problem Statement" class="overview-img"
+                            style="max-width: 100%; margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="column is-three-fifths has-text-justified">
+                        <div class="content">
+                            <p>
+                                In Federated Learning (FL), clients collaboratively train a shared model by exchanging
+                                model updates (e.g., gradients) with a central server, keeping their raw data local.
+                                While FL is designed to preserve privacy, malicious attackers can still extract
+                                sensitive private data from these shared updates through Gradient Inversion Attacks
+                                (GIAs).
+                            </p>
+                            <p>
+                                While powerful active GIAs can recover training samples even under large batch sizes,
+                                they typically rely on deploying non-standard, specially crafted network architectures
+                                to the client devices. This creates a critical research question: <strong>how can an
+                                    attacker reconstruct private data from large batches in practical FL settings
+                                    without altering the standard architecture?</strong> Our ARES attack exploits the
+                                intermediate activations of fully connected layers to bridge this gap, posing a highly
+                                realistic privacy threat.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Method Overview -->
+        <section class="section hero is-light">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-four-fifths">
+                        <h2 class="title is-3">Method Overview</h2>
+                        <div class="content has-text-justified">
+                            <img src="images/overview.png" alt="ARES Method Overview" class="overview-img"
+                                style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; display: block; margin-left: auto; margin-right: auto;">
+                            <p>
+                                The ARES attack operates in two main stages: <strong>Preparation</strong> and
+                                <strong>Inference</strong>.
+                            </p>
+                            <p>
+                                During the <strong>preparation stage</strong>, the attacker configures the global model
+                                parameters before distribution. Specifically, it maliciously crafts the weights and
+                                biases of the fully connected (FC) layer to maximize information leakage, ensuring each
+                                neuron leaves a distinct imprint corresponding to a single client’s data sample.
+                            </p>
+                            <p>
+                                During the <strong>inference stage</strong>, once the locally-trained updates are
+                                returned by the clients, the attacker utilizes linear layer leakage to extract the
+                                intermediate activations fed into the FC layer. To faithfully map these activations back
+                                to the original training images without requiring architecture modifications, the
+                                recovery is reformulated as a noisy sparse recovery problem. This is solved effectively
+                                using the generalized Least Absolute Shrinkage and Selection Operator (Lasso) algorithm.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experimental Results Carousel -->
+        <section class="hero is-small" style="padding: 2rem 0 4rem 0;">
+            <div class="hero-body">
+                <div class="container is-max-desktop">
+                    <h2 class="title is-3 has-text-centered">Experimental Results</h2>
+                    <p class="has-text-centered" style="margin-bottom: 2rem;">
+                        ARES demonstrates high-fidelity reconstruction across datasets of varying complexity under batch
+                        size 32, significantly outperforming prior active GIAs.
+                    </p>
+                    <div id="results-carousel" class="carousel results-carousel">
+                        <div class="item">
+                            <img src="images/mnist.png" alt="MNIST Reconstruction Results"
+                                style="margin: 0 auto; display: block;" />
+                            <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">MNIST</h2>
+                        </div>
+                        <div class="item">
+                            <img src="images/cifar10.png" alt="CIFAR-10 Reconstruction Results"
+                                style="margin: 0 auto; display: block;" />
+                            <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">CIFAR-10</h2>
+                        </div>
+                        <div class="item">
+                            <img src="images/imagenet.png" alt="ImageNet Reconstruction Results"
+                                style="margin: 0 auto; display: block;" />
+                            <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">ImageNet</h2>
+                        </div>
+                        <div class="item">
+                            <img src="images/ham.png" alt="HAM10000 Reconstruction Results"
+                                style="margin: 0 auto; display: block;" />
+                            <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">HAM10000</h2>
+                        </div>
+                        <div class="item">
+                            <img src="images/lung.png" alt="Lung-Colon Cancer Reconstruction Results"
+                                style="margin: 0 auto; display: block;" />
+                            <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">Lung-Colon Cancer</h2>
+                        </div>
+                    </div>
+
+                    <hr style="margin-top: 3rem; margin-bottom: 3rem;">
+
+                    <h3 class="title is-4 has-text-centered" style="margin-bottom: 2rem;">Text Reconstruction (Wikitext
+                        Dataset)</h3>
+                    <p class="has-text-centered" style="margin-bottom: 2rem;">
+                        ARES accurately recovers text tokens from gradient updates. The matching tokens between the
+                        original and recovered texts are highlighted in <span
+                            class="has-text-info has-text-weight-bold">blue</span>.
+                    </p>
+
+                    <div id="text-results-container" class="content"
+                        style="max-height: 500px; overflow-y: auto; padding: 1.5rem; border: 1px solid #eee; border-radius: 8px; background-color: #fff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 1: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.8267</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">It</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">home</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Museum</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">Natural</span> <span
+                                            class="has-text-info has-text-weight-bold">History</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">Antiquities</span> <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">1942</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">1997</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">MacArthur</span> <span
+                                            class="has-text-info has-text-weight-bold">Museum</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Military</span> <span
+                                            class="has-text-info has-text-weight-bold">History</span> <span
+                                            class="has-text-info has-text-weight-bold">since</span> <span
+                                            class="has-text-info has-text-weight-bold">2001.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> original plans
+                                        called for <span class="has-text-info has-text-weight-bold">it</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> be built <span
+                                            class="has-text-info has-text-weight-bold">of</span> stone, however, <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">home</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Museum</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">Natural</span> <span
+                                            class="has-text-info has-text-weight-bold">History</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">Antiquities</span> <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">1942</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">1997</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">MacArthur</span> <span
+                                            class="has-text-info has-text-weight-bold">Museum</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Military</span> <span
+                                            class="has-text-info has-text-weight-bold">History</span> <span
+                                            class="has-text-info has-text-weight-bold">since</span> <span
+                                            class="has-text-info has-text-weight-bold">2001.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 2: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.7310</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Besides being <span
+                                            class="has-text-info has-text-weight-bold">the</span> last <span
+                                            class="has-text-info has-text-weight-bold">remaining</span> <span
+                                            class="has-text-info has-text-weight-bold">structure</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">original</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock</span> <span
+                                            class="has-text-info has-text-weight-bold">Arsenal</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">one</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">oldest</span> <span
+                                            class="has-text-info has-text-weight-bold">buildings</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">central</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas,</span> <span
+                                            class="has-text-info has-text-weight-bold">it</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">also</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">birthplace</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">General</span> <span
+                                            class="has-text-info has-text-weight-bold">Douglas</span> <span
+                                            class="has-text-info has-text-weight-bold">MacArthur,</span> <span
+                                            class="has-text-info has-text-weight-bold">who</span> <span
+                                            class="has-text-info has-text-weight-bold">became</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">supreme</span> <span
+                                            class="has-text-info has-text-weight-bold">commander</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">US</span> <span
+                                            class="has-text-info has-text-weight-bold">forces</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">South</span> <span
+                                            class="has-text-info has-text-weight-bold">Pacific</span> <span
+                                            class="has-text-info has-text-weight-bold">during</span> <span
+                                            class="has-text-info has-text-weight-bold">World</span> <span
+                                            class="has-text-info has-text-weight-bold">War</span> <span
+                                            class="has-text-info has-text-weight-bold">II.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Work began on <span
+                                            class="has-text-info has-text-weight-bold">the</span> Tower <span
+                                            class="has-text-info has-text-weight-bold">War</span> on <span
+                                            class="has-text-info has-text-weight-bold">the</span> horizon, a company
+                                        <span class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> Second United States
+                                        Artillery, consisting <span class="has-text-info has-text-weight-bold">of</span>
+                                        sixty @-@ five men,
+                                        <span class="has-text-info has-text-weight-bold">was</span> transferred to
+                                        <span class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock</span> under <span
+                                            class="has-text-info has-text-weight-bold">the</span> command <span
+                                            class="has-text-info has-text-weight-bold">remaining</span> <span
+                                            class="has-text-info has-text-weight-bold">structure</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">original</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock</span> <span
+                                            class="has-text-info has-text-weight-bold">Arsenal</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">one</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">oldest</span> <span
+                                            class="has-text-info has-text-weight-bold">buildings</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">central</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas,</span> <span
+                                            class="has-text-info has-text-weight-bold">it</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">also</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">birthplace</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">General</span> <span
+                                            class="has-text-info has-text-weight-bold">Douglas</span> <span
+                                            class="has-text-info has-text-weight-bold">MacArthur,</span> <span
+                                            class="has-text-info has-text-weight-bold">who</span> <span
+                                            class="has-text-info has-text-weight-bold">became</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">supreme</span> <span
+                                            class="has-text-info has-text-weight-bold">commander</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">US</span> <span
+                                            class="has-text-info has-text-weight-bold">forces</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">South</span> <span
+                                            class="has-text-info has-text-weight-bold">Pacific</span> <span
+                                            class="has-text-info has-text-weight-bold">during</span> <span
+                                            class="has-text-info has-text-weight-bold">World</span> <span
+                                            class="has-text-info has-text-weight-bold">War</span> <span
+                                            class="has-text-info has-text-weight-bold">II.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 3: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 1.0000</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">It</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">also</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">starting</span> <span
+                                            class="has-text-info has-text-weight-bold">place</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">Camden</span> <span
+                                            class="has-text-info has-text-weight-bold">Expedition.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">It</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">also</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">starting</span> <span
+                                            class="has-text-info has-text-weight-bold">place</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">Camden</span> <span
+                                            class="has-text-info has-text-weight-bold">Expedition.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 4: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6605</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">In 2011 it was named as one <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> top 10 attractions
+                                        in <span class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">state</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> Arkansas by <unk>
+                                            <span class="has-text-info has-text-weight-bold">The</span> arsenal was
+                                            constructed at <span class="has-text-info has-text-weight-bold">the</span>
+                                            request <span class="has-text-info has-text-weight-bold">of</span>
+                                            Governor James Sevier Conway in response <span
+                                                class="has-text-info has-text-weight-bold">to</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">perceived</span> <span
+                                                class="has-text-info has-text-weight-bold">dangers</span> <span
+                                                class="has-text-info has-text-weight-bold">of</span> <span
+                                                class="has-text-info has-text-weight-bold">frontier</span> <span
+                                                class="has-text-info has-text-weight-bold">life</span> <span
+                                                class="has-text-info has-text-weight-bold">and</span> <span
+                                                class="has-text-info has-text-weight-bold">fears</span> <span
+                                                class="has-text-info has-text-weight-bold">of</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">many</span> <span
+                                                class="has-text-info has-text-weight-bold">Native</span> <span
+                                                class="has-text-info has-text-weight-bold">Americans</span> <span
+                                                class="has-text-info has-text-weight-bold">who</span> <span
+                                                class="has-text-info has-text-weight-bold">were</span> <span
+                                                class="has-text-info has-text-weight-bold">passing</span> <span
+                                                class="has-text-info has-text-weight-bold">through</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">state</span> <span
+                                                class="has-text-info has-text-weight-bold">on</span> <span
+                                                class="has-text-info has-text-weight-bold">their</span> <span
+                                                class="has-text-info has-text-weight-bold">way</span> <span
+                                                class="has-text-info has-text-weight-bold">to</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">newly</span> <span
+                                                class="has-text-info has-text-weight-bold">established</span> <span
+                                                class="has-text-info has-text-weight-bold">Oklahoma</span> <span
+                                                class="has-text-info has-text-weight-bold">Territory.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">On</span> February <span
+                                            class="has-text-info has-text-weight-bold">perceived</span> <span
+                                            class="has-text-info has-text-weight-bold">dangers</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">frontier</span> <span
+                                            class="has-text-info has-text-weight-bold">life</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">fears</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">many</span> <span
+                                            class="has-text-info has-text-weight-bold">Native</span> <span
+                                            class="has-text-info has-text-weight-bold">Americans</span> <span
+                                            class="has-text-info has-text-weight-bold">who</span> <span
+                                            class="has-text-info has-text-weight-bold">were</span> <span
+                                            class="has-text-info has-text-weight-bold">passing</span> <span
+                                            class="has-text-info has-text-weight-bold">through</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">state</span> <span
+                                            class="has-text-info has-text-weight-bold">on</span> <span
+                                            class="has-text-info has-text-weight-bold">their</span> <span
+                                            class="has-text-info has-text-weight-bold">way</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">newly</span> <span
+                                            class="has-text-info has-text-weight-bold">established</span> <span
+                                            class="has-text-info has-text-weight-bold">Oklahoma</span> <span
+                                            class="has-text-info has-text-weight-bold">Territory.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 5: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.7391</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Originally $ 14 @,@ <span
+                                            class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">allocated</span> for <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">construction</span> of <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">but</span> proved <span
+                                            class="has-text-info has-text-weight-bold">inadequate.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">allocated</span> garrison <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">construction</span> Smith <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">but</span> Fort <span
+                                            class="has-text-info has-text-weight-bold">inadequate.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 6: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.7544</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Originally $ 14 @,@ <span
+                                            class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">allocated</span> <span
+                                            class="has-text-info has-text-weight-bold">for</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">construction</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">but</span> <span
+                                            class="has-text-info has-text-weight-bold">proved</span> <span
+                                            class="has-text-info has-text-weight-bold">inadequate.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">But</span> in November 1860,
+                                        with <span class="has-text-info has-text-weight-bold">the</span> American
+                                        Civil <span class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">allocated</span> <span
+                                            class="has-text-info has-text-weight-bold">for</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">construction</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">but</span> <span
+                                            class="has-text-info has-text-weight-bold">proved</span> <span
+                                            class="has-text-info has-text-weight-bold">inadequate.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 7: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 1.0000</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">budget</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">later</span> <span
+                                            class="has-text-info has-text-weight-bold">increased</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">$</span> <span
+                                            class="has-text-info has-text-weight-bold">30</span> <span
+                                            class="has-text-info has-text-weight-bold">@,@</span> <span
+                                            class="has-text-info has-text-weight-bold">000.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">budget</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">later</span> <span
+                                            class="has-text-info has-text-weight-bold">increased</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">$</span> <span
+                                            class="has-text-info has-text-weight-bold">30</span> <span
+                                            class="has-text-info has-text-weight-bold">@,@</span> <span
+                                            class="has-text-info has-text-weight-bold">000.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 8: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 1.0000</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">@</span> <span
+                                            class="has-text-info has-text-weight-bold">91</span> <span
+                                            class="has-text-info has-text-weight-bold">m</span> <span
+                                            class="has-text-info has-text-weight-bold">)</span> <span
+                                            class="has-text-info has-text-weight-bold">exterior</span> <span
+                                            class="has-text-info has-text-weight-bold">walls.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">@</span> <span
+                                            class="has-text-info has-text-weight-bold">91</span> <span
+                                            class="has-text-info has-text-weight-bold">m</span> <span
+                                            class="has-text-info has-text-weight-bold">)</span> <span
+                                            class="has-text-info has-text-weight-bold">exterior</span> <span
+                                            class="has-text-info has-text-weight-bold">walls.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 9: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 1.0000</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Gazette</span> <span
+                                            class="has-text-info has-text-weight-bold">referred</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">structure</span> <span
+                                            class="has-text-info has-text-weight-bold">as</span> <span
+                                            class="has-text-info has-text-weight-bold">"</span> <span
+                                            class="has-text-info has-text-weight-bold">A</span> <span
+                                            class="has-text-info has-text-weight-bold">splendid</span> <span
+                                            class="has-text-info has-text-weight-bold">specimen</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">masonry</span> <span
+                                            class="has-text-info has-text-weight-bold">".</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansas</span> <span
+                                            class="has-text-info has-text-weight-bold">Gazette</span> <span
+                                            class="has-text-info has-text-weight-bold">referred</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">structure</span> <span
+                                            class="has-text-info has-text-weight-bold">as</span> <span
+                                            class="has-text-info has-text-weight-bold">"</span> <span
+                                            class="has-text-info has-text-weight-bold">A</span> <span
+                                            class="has-text-info has-text-weight-bold">splendid</span> <span
+                                            class="has-text-info has-text-weight-bold">specimen</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">masonry</span> <span
+                                            class="has-text-info has-text-weight-bold">".</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 10: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 1.0000</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">It</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">planned</span> <span
+                                            class="has-text-info has-text-weight-bold">for</span> <span
+                                            class="has-text-info has-text-weight-bold">February</span> <span
+                                            class="has-text-info has-text-weight-bold">18</span> <span
+                                            class="has-text-info has-text-weight-bold">;</span> <span
+                                            class="has-text-info has-text-weight-bold">however,</span> <span
+                                            class="has-text-info has-text-weight-bold">events</span> <span
+                                            class="has-text-info has-text-weight-bold">at</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">would</span> <span
+                                            class="has-text-info has-text-weight-bold">not</span> <span
+                                            class="has-text-info has-text-weight-bold">wait.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">It</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">planned</span> <span
+                                            class="has-text-info has-text-weight-bold">for</span> <span
+                                            class="has-text-info has-text-weight-bold">February</span> <span
+                                            class="has-text-info has-text-weight-bold">18</span> <span
+                                            class="has-text-info has-text-weight-bold">;</span> <span
+                                            class="has-text-info has-text-weight-bold">however,</span> <span
+                                            class="has-text-info has-text-weight-bold">events</span> <span
+                                            class="has-text-info has-text-weight-bold">at</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">arsenal,</span> <span
+                                            class="has-text-info has-text-weight-bold">would</span> <span
+                                            class="has-text-info has-text-weight-bold">not</span> <span
+                                            class="has-text-info has-text-weight-bold">wait.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 11: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.9436</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">first</span> <span
+                                            class="has-text-info has-text-weight-bold">telegraph</span> <span
+                                            class="has-text-info has-text-weight-bold">wire</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">span</span> <span
+                                            class="has-text-info has-text-weight-bold">between</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock</span> and <span
+                                            class="has-text-info has-text-weight-bold">Memphis</span> <span
+                                            class="has-text-info has-text-weight-bold">had</span> <span
+                                            class="has-text-info has-text-weight-bold">recently</span> <span
+                                            class="has-text-info has-text-weight-bold">been</span> <span
+                                            class="has-text-info has-text-weight-bold">completed.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">first</span> <span
+                                            class="has-text-info has-text-weight-bold">telegraph</span> <span
+                                            class="has-text-info has-text-weight-bold">wire</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">span</span> <span
+                                            class="has-text-info has-text-weight-bold">between</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock</span> installation <span
+                                            class="has-text-info has-text-weight-bold">Memphis</span> <span
+                                            class="has-text-info has-text-weight-bold">had</span> <span
+                                            class="has-text-info has-text-weight-bold">recently</span> <span
+                                            class="has-text-info has-text-weight-bold">been</span> <span
+                                            class="has-text-info has-text-weight-bold">completed.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 12: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6326</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> arsenal <span
+                                            class="has-text-info has-text-weight-bold">is</span> <span
+                                            class="has-text-info has-text-weight-bold">one</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">richest</span> <span
+                                            class="has-text-info has-text-weight-bold">depositories</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">military</span> <span
+                                            class="has-text-info has-text-weight-bold">stores</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">United</span> <span
+                                            class="has-text-info has-text-weight-bold">States</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">is</span> <span
+                                            class="has-text-info has-text-weight-bold">supposed</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">be</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">ultimate</span> <span
+                                            class="has-text-info has-text-weight-bold">destination</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">
+                                            <unk>
+                                        </span> <span class="has-text-info has-text-weight-bold">[</span> <span
+                                            class="has-text-info has-text-weight-bold">sic</span> <span
+                                            class="has-text-info has-text-weight-bold">]</span> <span
+                                            class="has-text-info has-text-weight-bold">ordered</span> <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> frontier.</p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Faced with <span
+                                            class="has-text-info has-text-weight-bold">the</span> fact that <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">military</span> had assembled
+                                        believing they were following his orders <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> consensus <span
+                                            class="has-text-info has-text-weight-bold">is</span> <span
+                                            class="has-text-info has-text-weight-bold">one</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">richest</span> <span
+                                            class="has-text-info has-text-weight-bold">depositories</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">military</span> <span
+                                            class="has-text-info has-text-weight-bold">stores</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">United</span> <span
+                                            class="has-text-info has-text-weight-bold">States</span> <span
+                                            class="has-text-info has-text-weight-bold">and</span> <span
+                                            class="has-text-info has-text-weight-bold">is</span> <span
+                                            class="has-text-info has-text-weight-bold">supposed</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">be</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">ultimate</span> <span
+                                            class="has-text-info has-text-weight-bold">destination</span> <span
+                                            class="has-text-info has-text-weight-bold">of</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">
+                                            <unk>
+                                        </span> <span class="has-text-info has-text-weight-bold">[</span> <span
+                                            class="has-text-info has-text-weight-bold">sic</span> <span
+                                            class="has-text-info has-text-weight-bold">]</span> <span
+                                            class="has-text-info has-text-weight-bold">ordered</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> help expel <span
+                                            class="has-text-info has-text-weight-bold">the</span> federal troops <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> arsenal.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 13: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6600</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">
+                                        <unk> M Harrel Telegram, January 31, 1861 <span
+                                                class="has-text-info has-text-weight-bold">The</span> item was
+                                            intended simply as a piece of news, but <span
+                                                class="has-text-info has-text-weight-bold">telegraph</span> <span
+                                                class="has-text-info has-text-weight-bold">lines</span> <span
+                                                class="has-text-info has-text-weight-bold">quickly</span> <span
+                                                class="has-text-info has-text-weight-bold">spread</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">news</span> <span
+                                                class="has-text-info has-text-weight-bold">throughout</span> <span
+                                                class="has-text-info has-text-weight-bold">the</span> <span
+                                                class="has-text-info has-text-weight-bold">state,</span> <span
+                                                class="has-text-info has-text-weight-bold">fueling</span> <span
+                                                class="has-text-info has-text-weight-bold">procession</span> <span
+                                                class="has-text-info has-text-weight-bold">sentiment.</span>
+                                    </p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Thirty @-@ <span
+                                            class="has-text-info has-text-weight-bold">telegraph</span> <span
+                                            class="has-text-info has-text-weight-bold">lines</span> <span
+                                            class="has-text-info has-text-weight-bold">quickly</span> <span
+                                            class="has-text-info has-text-weight-bold">spread</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">news</span> <span
+                                            class="has-text-info has-text-weight-bold">throughout</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">state,</span> <span
+                                            class="has-text-info has-text-weight-bold">fueling</span> <span
+                                            class="has-text-info has-text-weight-bold">procession</span> <span
+                                            class="has-text-info has-text-weight-bold">sentiment.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 14: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6527</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">rumor</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">interpreted</span> <span
+                                            class="has-text-info has-text-weight-bold">by</span> <span
+                                            class="has-text-info has-text-weight-bold">some</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansans</span> <span
+                                            class="has-text-info has-text-weight-bold">as</span> <span
+                                            class="has-text-info has-text-weight-bold">a</span> <span
+                                            class="has-text-info has-text-weight-bold">call</span> <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">governor</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">assemble</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> help expel <span
+                                            class="has-text-info has-text-weight-bold">the</span> federal troops <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> arsenal.</p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> <span
+                                            class="has-text-info has-text-weight-bold">rumor</span> <span
+                                            class="has-text-info has-text-weight-bold">was</span> <span
+                                            class="has-text-info has-text-weight-bold">interpreted</span> <span
+                                            class="has-text-info has-text-weight-bold">by</span> <span
+                                            class="has-text-info has-text-weight-bold">some</span> <span
+                                            class="has-text-info has-text-weight-bold">Arkansans</span> <span
+                                            class="has-text-info has-text-weight-bold">as</span> <span
+                                            class="has-text-info has-text-weight-bold">a</span> <span
+                                            class="has-text-info has-text-weight-bold">call</span> <span
+                                            class="has-text-info has-text-weight-bold">from</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">governor</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">assemble</span> numbers could
+                                        be increased <span class="has-text-info has-text-weight-bold">to</span> 5 @,@
+                                        000 if <span class="has-text-info has-text-weight-bold">the</span> situations
+                                        deemed it necessary, had assembled in Little Rock.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 15: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6700</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">By</span> February 5, six
+                                        militia units, consisting of 1 <span
+                                            class="has-text-info has-text-weight-bold">@,@</span> <span
+                                            class="has-text-info has-text-weight-bold">000</span> men, with <span
+                                            class="has-text-info has-text-weight-bold">a</span> guarantee that <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">numbers</span> <span
+                                            class="has-text-info has-text-weight-bold">could</span> <span
+                                            class="has-text-info has-text-weight-bold">be</span> <span
+                                            class="has-text-info has-text-weight-bold">increased</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">5</span> <span
+                                            class="has-text-info has-text-weight-bold">@,@</span> <span
+                                            class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">if</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">situations</span> <span
+                                            class="has-text-info has-text-weight-bold">deemed</span> <span
+                                            class="has-text-info has-text-weight-bold">it</span> <span
+                                            class="has-text-info has-text-weight-bold">necessary,</span> <span
+                                            class="has-text-info has-text-weight-bold">had</span> <span
+                                            class="has-text-info has-text-weight-bold">assembled</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock.</span></p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">The</span> rumor was
+                                        interpreted <span class="has-text-info has-text-weight-bold">by</span> some
+                                        Arkansans as <span class="has-text-info has-text-weight-bold">a</span> call
+                                        from <span class="has-text-info has-text-weight-bold">the</span> governor
+                                        <span class="has-text-info has-text-weight-bold">to</span> assemble <span
+                                            class="has-text-info has-text-weight-bold">numbers</span> <span
+                                            class="has-text-info has-text-weight-bold">could</span> <span
+                                            class="has-text-info has-text-weight-bold">be</span> <span
+                                            class="has-text-info has-text-weight-bold">increased</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> <span
+                                            class="has-text-info has-text-weight-bold">5</span> <span
+                                            class="has-text-info has-text-weight-bold">@,@</span> <span
+                                            class="has-text-info has-text-weight-bold">000</span> <span
+                                            class="has-text-info has-text-weight-bold">if</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">situations</span> <span
+                                            class="has-text-info has-text-weight-bold">deemed</span> <span
+                                            class="has-text-info has-text-weight-bold">it</span> <span
+                                            class="has-text-info has-text-weight-bold">necessary,</span> <span
+                                            class="has-text-info has-text-weight-bold">had</span> <span
+                                            class="has-text-info has-text-weight-bold">assembled</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">Little</span> <span
+                                            class="has-text-info has-text-weight-bold">Rock.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 16: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.7368</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;">Governor Rector vehemently denied
+                                        ordering <span class="has-text-info has-text-weight-bold">the</span> troops to
+                                        <span class="has-text-info has-text-weight-bold">assemble</span> <span
+                                            class="has-text-info has-text-weight-bold">or</span> <span
+                                            class="has-text-info has-text-weight-bold">giving</span> <span
+                                            class="has-text-info has-text-weight-bold">any</span> <span
+                                            class="has-text-info has-text-weight-bold">order</span> <span
+                                            class="has-text-info has-text-weight-bold">at</span> <span
+                                            class="has-text-info has-text-weight-bold">all</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">connection</span> <span
+                                            class="has-text-info has-text-weight-bold">with</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">troops.</span>
+                                    </p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">In</span> 2011 it was named as
+                                        one of <span class="has-text-info has-text-weight-bold">assemble</span> <span
+                                            class="has-text-info has-text-weight-bold">or</span> <span
+                                            class="has-text-info has-text-weight-bold">giving</span> <span
+                                            class="has-text-info has-text-weight-bold">any</span> <span
+                                            class="has-text-info has-text-weight-bold">order</span> <span
+                                            class="has-text-info has-text-weight-bold">at</span> <span
+                                            class="has-text-info has-text-weight-bold">all</span> <span
+                                            class="has-text-info has-text-weight-bold">in</span> <span
+                                            class="has-text-info has-text-weight-bold">connection</span> <span
+                                            class="has-text-info has-text-weight-bold">with</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">troops.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box"
+                            style="margin-bottom: 2rem; border: 1px solid #ddd; background-color: #fafafa;">
+                            <h5 class="title is-5 has-text-grey" style="margin-bottom: 1rem;">Match 17: <span
+                                    class="tag is-info is-light is-pulled-right">Similarity: 0.6698</span></h5>
+                            <div class="columns">
+                                <div class="column is-half" style="border-right: 1px solid #eee;">
+                                    <h6 class="subtitle is-6">Original Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">Governor</span> <span
+                                            class="has-text-info has-text-weight-bold">Rector</span> <span
+                                            class="has-text-info has-text-weight-bold">vehemently</span> <span
+                                            class="has-text-info has-text-weight-bold">denied</span> <span
+                                            class="has-text-info has-text-weight-bold">ordering</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">troops</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> assemble or giving
+                                        any order at all in connection with <span
+                                            class="has-text-info has-text-weight-bold">the</span> troops.</p>
+                                </div>
+                                <div class="column is-half">
+                                    <h6 class="subtitle is-6">Recovered Text </h6>
+                                    <p class="is-size-6" style="line-height: 1.6;"><span
+                                            class="has-text-info has-text-weight-bold">Governor</span> <span
+                                            class="has-text-info has-text-weight-bold">Rector</span> <span
+                                            class="has-text-info has-text-weight-bold">vehemently</span> <span
+                                            class="has-text-info has-text-weight-bold">denied</span> <span
+                                            class="has-text-info has-text-weight-bold">ordering</span> <span
+                                            class="has-text-info has-text-weight-bold">the</span> <span
+                                            class="has-text-info has-text-weight-bold">troops</span> <span
+                                            class="has-text-info has-text-weight-bold">to</span> -@ foot @-@ thick ( 0
+                                        @.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </section>
+
+        <!-- Robustness Against Defenses -->
+        <section class="section hero is-light">
+            <div class="container is-max-desktop">
+                <h2 class="title is-3 has-text-centered" style="margin-bottom: 2rem;">Robustness Against Defenses</h2>
+                <p class="has-text-centered" style="margin-bottom: 3rem;">
+                    ARES maintains robust reconstruction capabilities even when the FL system employs common
+                    privacy-preserving defenses, including Differential Privacy (DP), Quantization, and Gradient
+                    Sparsification.
+                </p>
+
+                <div class="columns">
+                    <!-- Differential Privacy -->
+                    <div class="column is-one-third">
+                        <h3 class="title is-4 has-text-centered">Differential Privacy</h3>
+                        <div id="dp-carousel" class="carousel results-carousel" style="margin-bottom: 1rem;">
+                            <div class="item">
+                                <img src="images/dp/0.0001.png" alt="DP noise 0.0001"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Noise
+                                        Scale:</strong> 0.0001
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/dp/0.001.png" alt="DP noise 0.01"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Noise
+                                        Scale:</strong> 0.01
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/dp/0.01.png" alt="DP noise 0.01"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Noise
+                                        Scale:</strong> 0.01
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantization -->
+                    <div class="column is-one-third">
+                        <h3 class="title is-4 has-text-centered">Quantization</h3>
+                        <div id="quant-carousel" class="carousel results-carousel" style="margin-bottom: 1rem;">
+                            <div class="item">
+                                <img src="images/quant/18.png" alt="Quantization 18 bit"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Bits:</strong> 18
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/quant/22.png" alt="Quantization 22 bit"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Bits:</strong> 22
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/quant/26.png" alt="Quantization 26 bit"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Bits:</strong> 26
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/quant/30.png" alt="Quantization 30 bit"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Bits:</strong> 30
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gradient Sparsification -->
+                    <div class="column is-one-third">
+                        <h3 class="title is-4 has-text-centered">Gradient Sparsification</h3>
+                        <div id="sparse-carousel" class="carousel results-carousel" style="margin-bottom: 1rem;">
+                            <div class="item">
+                                <img src="images/sparse/65.png" alt="Sparsification 65%"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Pruning Ratio:</strong> 65%
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/sparse/75.png" alt="Sparsification 75%"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Pruning Ratio:</strong> 75%
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/sparse/85.png" alt="Sparsification 85%"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Pruning Ratio:</strong> 85%
+                                </p>
+                            </div>
+                            <div class="item">
+                                <img src="images/sparse/95.png" alt="Sparsification 95%"
+                                    style="margin: 0 auto; display: block; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <p class="subtitle is-6 has-text-centered" style="margin-top: 1rem; color: #555;">
+                                    <strong>Pruning Ratio:</strong> 95%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="BibTeX">
+            <div class="container is-max-desktop content">
+                <h2 class="title">BibTeX</h2>
+                <pre><code>@inproceedings{gong2026ares,
+  title={ARES: Scalable and Practical Gradient Inversion Attack in Federated Learning through Activation Recovery},
+  author={Gong, Zirui and Zhang, Leo Yu and Zhang, Yanjun and Vo, Viet and Zhu, Tianqing and Pan, Shirui and Wang, Cong},
+  year={2026},
+  booktitle={2026 IEEE Symposium on Security and Privacy (SP)}
+}</code></pre>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-8">
+                        <div class="content">
+                            <p>
+                                This page was built using the <a
+                                    href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                                    target="_blank">Academic Project Page Template</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Image Enlargement Modal -->
+        <div id="image-modal" class="modal">
+            <div class="modal-background" onclick="closeModal()"></div>
+            <div class="modal-content" style="width: auto; max-width: 90vw; position: relative; overflow: visible;">
+                <button id="modal-prev" onclick="prevImage(event)" class="button is-white is-large"
+                    style="position: absolute; left: -60px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: white;">
+                    <i class="fas fa-chevron-left fa-2x"></i>
+                </button>
+                <p class="image has-text-centered">
+                    <img id="modal-image" src="" alt="Enlarged figure"
+                        style="max-height: 90vh; width: auto; margin: 0 auto; display: inline-block; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); background-color: #fff;">
+                </p>
+                <button id="modal-next" onclick="nextImage(event)" class="button is-white is-large"
+                    style="position: absolute; right: -60px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: white;">
+                    <i class="fas fa-chevron-right fa-2x"></i>
+                </button>
+            </div>
+            <button class="modal-close is-large" aria-label="close" onclick="closeModal()"></button>
+        </div>
+
+        <script>
+            let currentGallery = [];
+            let currentIndex = 0;
+
+            function openModal(imgElement) {
+                // Determine which carousel this belongs to
+                const carouselParent = imgElement.closest('.carousel');
+                if (carouselParent) {
+                    const allImgs = Array.from(carouselParent.querySelectorAll('img'));
+                    // Carousel might clone items, so deduplicate based on src
+                    currentGallery = [...new Set(allImgs.map(img => img.src))];
+                    currentIndex = currentGallery.indexOf(imgElement.src);
+                    if (currentIndex === -1) currentIndex = 0;
+                } else {
+                    currentGallery = [imgElement.src];
+                    currentIndex = 0;
+                }
+                updateModalImage();
+                document.getElementById('image-modal').classList.add('is-active');
+            }
+
+            function updateModalImage() {
+                if (currentGallery.length > 0) {
+                    document.getElementById('modal-image').src = currentGallery[currentIndex];
+                    // Show or hide arrows if there's only 1 image
+                    const displayArrows = currentGallery.length > 1 ? 'block' : 'none';
+                    document.getElementById('modal-prev').style.display = displayArrows;
+                    document.getElementById('modal-next').style.display = displayArrows;
+                }
+            }
+
+            function nextImage(e) {
+                if (e) e.stopPropagation();
+                if (currentGallery.length > 0) {
+                    currentIndex = (currentIndex + 1) % currentGallery.length;
+                    updateModalImage();
+                }
+            }
+
+            function prevImage(e) {
+                if (e) e.stopPropagation();
+                if (currentGallery.length > 0) {
+                    currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+                    updateModalImage();
+                }
+            }
+
+            function closeModal() {
+                document.getElementById('image-modal').classList.remove('is-active');
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                // Attach click event to defense carousel images
+                const defenseImages = document.querySelectorAll('#dp-carousel img, #quant-carousel img, #sparse-carousel img');
+                defenseImages.forEach(img => {
+                    img.style.cursor = 'zoom-in';
+                    img.title = "Click to enlarge";
+                    img.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openModal(img);
+                    });
+                });
+            });
+
+            // Handle Keyboard Navigation
+            document.addEventListener('keydown', (event) => {
+                const modal = document.getElementById('image-modal');
+                if (!modal.classList.contains('is-active')) return;
+
+                if (event.key === 'Escape') {
+                    closeModal();
+                } else if (event.key === 'ArrowRight') {
+                    nextImage();
+                } else if (event.key === 'ArrowLeft') {
+                    prevImage();
+                }
+            });
+
+
+        </script>
+</body>
+
+</html>

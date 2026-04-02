@@ -1,0 +1,66 @@
+text1 = """The Tower Building of the Little Rock Arsenal, also known as U.S. Arsenal Building, is a building located in MacArthur Park in downtown Little Rock, Arkansas
+. Built in 1840, it was part of Little Rock's first military installation. Since its decommissioning, The Tower Building has housed two museums. It
+ was home to the Arkansas Museum of Natural History and Antiquities from 1942 to 1997 and the MacArthur Museum of Arkansas Military History since 2001. It has also been the
+ headquarters of the Little Rock Æsthetic Club since 1894.
+ The building receives its name from its distinct octagonal tower. Besides being the last
+ remaining structure of the original Little Rock Arsenal and one of the oldest buildings in central Arkansas, it was also the birthplace of General Douglas MacArthur, who became the supreme
+ commander of US forces in the South Pacific during World War II. It was also the starting place of the Camden Expedition. In 2011 it was named as one of
+ the top 10 attractions in the state of Arkansas by <unk>
+ The arsenal was constructed at the request of Governor James Sevier Conway in response to the
+ perceived dangers of frontier life and fears of the many Native Americans who were passing through the state on their way to the newly established Oklahoma Territory. Thirty @-@
+ six acres were appropriated on the outskirts of Little Rock by Major Robert B. Lee of the U.S. Army. The land had been previously used as a
+ racetrack by the local jockey club. John Wormley Walker, a builder for the Federal Government, supervised the construction. Originally $ 14 @,@
+ 000 was allocated for the construction of the arsenal, but proved inadequate. The budget was later increased to $ 30 @,@ 000. Work began on the Tower
+ Building in 1840, and it was the first permanent structure of the arsenal to be built. Being originally constructed to store ammunition, the building was designed with 3 @
+-@ foot @-@ thick ( 0 @.@ 91 m ) exterior walls. The original plans called for it to be built of stone, however,
+ masonry was used instead. The Arkansas Gazette referred to the structure as " A splendid specimen of masonry ".
+ For several years the arsenal, which
+ was owned by the federal government, served as a simple arms depot and was staffed with only a handful of soldiers. But in November 1860, with the American Civil
+ War on the horizon, a company of the Second United States Artillery, consisting of sixty @-@ five men, was transferred to Little Rock under the command
+ of Captain James Totten. On January 15, 1861, the state legislature decided to hold a referendum to determine if a state convention should be held to consider the
+ issue of secession and to elect delegates to such a convention. It was planned for February 18 ; however, events at the arsenal, would not wait. On January
+ 28, then Governor Henry Massey Rector informed Captain Totten that he and his soldiers would be " permitted to remain in the possession of the Federal officers until
+ the State, by authority of the people, shall have determined to sever their connection with the General Government, " Totten responded to this by telling the Governor that
+ his orders came from the United States Government and began a desperate but ultimately futile dispatch of letters and telegrams asking for reinforcements, although rumors were widely spread that
+ they were already coming. The first telegraph wire to span between Little Rock and Memphis had recently been completed. Local attorney John M Harrel was asked to compose
+ the first telegraph dispatched from Arkansas's capital. In his message, Harrel reported unconfirmed rumors that more federal troops had been sent to reinforce the Little
+ Rock Arsenal.
+ The United States troops at the outposts of the western frontier of the state and in the Indian nation have all been recalled from winter quarters
+ to reinforce the garrison at Fort Smith. The garrison at Fort Smith had been previously transferred to the United States Arsenal in this city ( Little Rock ). The arsenal
+ is one of the richest depositories of military stores in the United States and is supposed to be the ultimate destination of the <unk> [ sic ] ordered
+ from the frontier.
+ <unk> M Harrel Telegram, January 31, 1861
+ The item was intended simply as a piece of news, but
+ telegraph lines quickly spread the news throughout the state, fueling procession sentiment. The rumor was interpreted by some Arkansans as a call from the governor to assemble
+ to help expel the federal troops from the arsenal. By February 5, six militia units, consisting of 1 @,@ 000 men, with a guarantee that the
+ numbers could be increased to 5 @,@ 000 if the situations deemed it necessary, had assembled in Little Rock. Governor Rector vehemently denied ordering the troops to
+ assemble or giving any order at all in connection with the troops. Faced with the fact that the military had assembled believing they were following his orders and the consensus
+ of the citizens of Little Rock against any armed conflict between the civilian army and federal troops, Governor Rector was forced to take control of the situation. On February
+"""
+
+text2 = """000 was allocated garrison the construction Smith the arsenal, but Fort inadequate. The budget transferred to the to $ 30 @,@ 000 Little Work began on The Tower
+ the State, by authority of the people, shall have determined to sever their connection with the General Government, " Totten responded to this by telling the Governor that
+ issue of secession and to elect delegates to such a convention. It was planned for February 18 ; however, events at the arsenal, would not wait. On January
+ they were already coming. The first telegraph wire to span between Little Rock installation Memphis had recently been completed. Local attorney John M Harrel was asked to compose
+ The Tower Building of the Little Rock Arsenal, also known as U.S. Arsenal Building, is a building located in MacArthur Park in downtown Little Rock, Arkansas
+ headquarters top 10 attractions in the state of Arkansas by < 18>
+ The arsenal was constructed at the request of Governor James Sevier Conway in response to the
+ his orders came from the United States Government and began a desperate but ultimately futile dispatch of letters and telegrams asking for reinforcements, although rumors were widely spread that
+ masonry was used instead. The Arkansas Gazette referred to the structure as " A splendid specimen of masonry ".
+ For several years the arsenal, which
+ of Captain James Totten. On January 15, 1861, the state legislature decided to hold a referendum to determine if a state convention should be held to consider the
+ 28, then Governor Henry Massey Rector informed Captain Totten that he and his soldiers would be " permitted to remain in the possession of the Federal officers until
+ was owned by the federal government, served as a simple arms depot and was staffed with only a handful of soldiers. But in November 1860, with the American Civil
+ 000 was allocated for the construction of the arsenal, but proved inadequate. The budget was later increased to $ 30 @,@ 000. Work began on the Tower
+ War on the horizon, a company of the Second United States Artillery, consisting of sixty @-@ five men, was transferred to Little Rock under the command
+ remaining structure of the original Little Rock Arsenal and one of the oldest buildings in central Arkansas, it was also the birthplace of General Douglas MacArthur, who became the supreme
+ commander of US forces in the South Pacific during World War II. It was also the starting place of the Camden Expedition. In 2011 it was named as one of
+ assemble or giving any order at all in connection with the troops. Faced with the fact that the military had assembled believing they were following his orders and the consensus
+ is one of the richest depositories of military stores in the United States and is supposed to be the ultimate destination of the <unk> [ sic ] ordered
+ to help expel the federal troops from the arsenal. By February 5, six militia units, consisting of 1 @,@ 000 men, with a guarantee that the
+ of the citizens of Little Rock against any armed conflict between the civilian army and federal troops, Governor Rector was forced to take control of the situation. On February
+ perceived dangers of frontier life and fears of the many Native Americans who were passing through the state on their way to the newly established Oklahoma Territory. Thirty @-@
+ telegraph lines quickly spread the news throughout the state, fueling procession sentiment. The rumor was interpreted by some Arkansans as a call from the governor to assemble
+ numbers could be increased to 5 @,@ 000 if the situations deemed it necessary, had assembled in Little Rock. Governor Rector vehemently denied ordering the troops to
+-@ foot @-@ thick ( 0 @.@ 91 m ) exterior walls. The original plans called for it to be built of stone, however,
+ was home to the Arkansas Museum of Natural History and Antiquities from 1942 to 1997 and the MacArthur Museum of Arkansas Military History since 2001. It has also been the."""

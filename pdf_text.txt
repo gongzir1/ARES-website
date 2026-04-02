@@ -1,0 +1,531 @@
+ARES: Scalable and Practical Gradient Inversion Attack in Federated Learning
+through Activation Recovery
+Zirui Gong 1, Leo Yu Zhang /envel⌢pe1, Yanjun Zhang 1, Viet V o2, Tianqing Zhu 3, Shirui Pan 1, Cong Wang 4
+1 Griffith University
+2 Swinburne University of Technology
+3 City University of Macau
+4 City University of Hong Kong
+Abstract—Federated Learning (FL) enables collaborative
+model training by sharing model updates instead of raw data,
+aiming to protect user privacy. However, recent studies reveal
+that these shared updates can inadvertently leak sensitive train-
+ing data through gradient inversion attacks (GIAs). Among
+them, active GIAs are particularly powerful, enabling high-
+fidelity reconstruction of individual samples even under large
+batch sizes. Nevertheless, existing approaches often require
+architectural modifications, which limit their practical appli-
+cability. In this work, we bridge this gap by introducing the
+Activation RE covery via S parse inversion (ARES) attack, an
+active GIA designed to reconstruct training samples from large
+training batches without requiring architectural modifications.
+Specifically, we formulate the recovery problem as a noisy
+sparse recovery task and solve it using the generalized Least
+Absolute Shrinkage and Selection Operator (Lasso). To extend
+the attack to multi-sample recovery, ARES incorporates the
+imprint method to disentangle activations, enabling scalable
+per-sample reconstruction. We further establish the expected
+recovery rate and derive an upper bound on the reconstruc-
+tion error, providing theoretical guarantees for the ARES at-
+tack. Extensive experiments on CNNs and MLPs demonstrate
+that ARES achieves high-fidelity reconstruction across diverse
+datasets, significantly outperforming prior GIAs under large
+batch sizes and realistic FL settings. Our results highlight that
+intermediate activations pose a serious and underestimated
+privacy risk in FL, underscoring the urgent need for stronger
+defenses.
+1. Introduction
+Federated Learning (FL) [9] is a decentralized paradigm
+for training machine learning models, wherein multiple
+clients collaboratively optimize a shared global model with-
+out disclosing their private data. In this framework, each
+client preserves its local dataset and performs model training
+independently. The locally computed updates or gradients
+are then transmitted to a central server, which aggregates
+them to refine the global model and subsequently redis-
+tributes it to the clients for the next training round. FL
+/envel⌢peCorrespondence to Leo Yu Zhang (leo.zhang@griffith.edu.au).
+has gained great popularity and has been widely adopted in
+healthcare and finance, as it enables the training of machine
+learning models on large-scale datasets without exposing
+clients’ raw data to the central server [10]–[14].
+However, recent studies demonstrate that FL can provide
+a false sense of privacy, as the server can extract sensitive
+information, including the clients’ private training data, from
+the shared updates. Such threats, referred to as gradient
+inversion attacks (GIA) [1]–[8], [15], [16], can be broadly
+classified into two categories, as summarized in Table 1. In
+the passive setting, an honest-but-curious server attempts to
+reconstruct training samples by iteratively minimizing the
+discrepancy between the gradients of dummy samples and
+the observed gradients of the true data [1]–[4], [15]. While
+conceptually straightforward, these approaches often fail to
+generalize to complex datasets and suffer substantial perfor-
+mance degradation when the training batch size increases
+(usually limited to batch sizes smaller than 64).
+In contrast, active attacks assume a malicious server
+that manipulates the model parameters or architecture to
+amplify privacy leakage [5]–[8]. A commonly used strategy
+is the linear layer leakage , where if only a single sample
+x activates neuron i in a fully connected (FC) layer, the
+sample x can be directly revealed by dividing the weight
+gradient by the bias gradient of neuron i. Building on
+this principle, the adversary designs malicious parameters
+to disentangle individual sample contributions across neu-
+rons, ensuring that each neuron’s recovery corresponds to a
+distinct training sample. Despite their effectiveness, these
+attacks suffer from notable practical limitations, as they
+typically require modifications to the model architectures.
+First, linear layer leakage can only reconstruct the direct
+inputs to an FC layer. Consequently, prior attacks typically
+insert a specially designed FC layer before the target model
+to enable reconstruction [6], [8], resulting in a nonstandard
+architecture that may raise suspicion. Second, even for those
+networks that have an FC layer in the first layer (e.g., MLP),
+achieving high recovery rates demands the number of output
+neurons in the FL layer exceed the batch size, with about
+four times larger being optimal [8]. This requirement forces
+adjustments to the network dimensions relative to the batch
+size, increasing the extent of structural modification and
+TABLE 1: Comparison of different GIAs. ● supported; ❍ not supported; partially supported.
+Methods Attack Type Large Batch Architecture Integrity One-shot Complex Data Theoretical Guarantee
+iDLG [1] Passive ❍ ● ● ❍ ❍
+InvertingGrad (NeurIPS 2020) [2] Passive ❍ ● ● ❍ ❍
+GradInversion (CVPR 2021) [3] Passive ❍ ● ● ❍ ❍
+FedLeak (USENIX 2025) [4] Passive ❍ ● ● ● ❍
+Fishing (ICML 2023) [5] Active ∗ ● ❍ ● ❍
+RtF (ICLR 2022) [6] Active ● ❍ ● ● ●
+Trap Weight (EuroS&P 2023) [7] Active ● † ● ● ❍
+LOKI (S&P 2024) [8] Active ● ❍ ● ● ●
+ARES (Ours) Active ● ● ● ● ●
+* Fishing [5] can only recover a single image from a batch. † Trap Weight [7] requires the input to be positive to preserve architecture integrity.
+reducing the attacks’ practicality.
+Our work: We bridge this gap and propose the
+Activation RE covery via S parse inversion (ARES) attack,
+a practical and effective active GIA that scales to real-
+istic large batch sizes without necessitating architectural
+modifications, thereby enhancing its applicability to real-
+world scenarios. To achieve this, we first reveal that the
+practical limitations of prior active GIAs can be overcome
+by tackling the fundamental challenge of inverting hidden
+activations into training samples. Even without architectural
+modifications, the attacker can still leverage existing FC
+layers—typically located in deeper parts of the network—to
+obtain activations that are fed into them. These activations
+can then be further inverted to recover the corresponding
+training samples.
+Motivated by this observation, this work focuses on the
+inversion problem from activations to training samples. To
+tackle this, we first formulate the operations before the FC
+layer as a linear transformation followed by a nonlinear
+transformation (caused by activation functions). Under this
+formulation, we identify two key challenges that hinder
+recovery. First, the nonlinear activations in earlier layers
+render the overall mapping non-invertible, thereby preclud-
+ing exact recovery of the training sample through a direct
+inverse transformation. Second, the linear transformation
+is often underdetermined (i.e., the number of unknowns
+exceeds the number of known measurements), particularly
+in MLP-based architectures. For example, sample features
+typically lie in a high-dimensional space (e.g., 14,784 for
+ImageNet), while the activation in the FC layer resides
+in a much lower-dimensional space, equal to the number
+of output neurons. Even in CNN-based networks, ReLU
+activations before the FC layer may zero out many mea-
+surements, discarding information that could aid recovery.
+Consequently, the available measurements are insufficient
+compared to the dimensionality of the target sample, mak-
+ing the reconstruction of training data from activations an
+underdetermined nonlinear inversion problem .
+To address this problem, we relax the inversion task and
+reformulate it as a noisy sparse recovery problem , and use
+the knowledge from compressed sensing theory to solve it
+[17]–[21]. Specifically, to mitigate the challenges posed by
+nonlinearity, we approximate the nonlinear transformation
+as a noisy, scaled linear mapping. To further address the
+underdetermined nature of the problem, we exploit the fact
+that many types of data (e.g., natural images, text embed-
+dings, and audio signals) admit sparse representations in
+suitable domains. In other words, such data can be effec-
+tively compressed into a vector with most entries being zero,
+reducing the number of unknowns to recover. Based on these
+observations, we reformulate the problem as a noisy sparse
+recovery task and employ the generalized Least Absolute
+Shrinkage and Selection Operator (Lasso) method [20] to
+identify the sparsest solution consistent with the observed
+measurements. To extend recovery from single-sample to a
+batch of samples, we integrate the imprint method proposed
+by RtF [6]. In particular, we leverage the bias of the FC
+layer as cut-offs so that different samples activate different
+neurons. As a result, each neuron primarily captures the
+contribution of a single sample, enabling linear layer leakage
+to recover the corresponding activation. Here, we do not
+require the number of neurons in the FC layer to exceed
+the batch size, as we allow the second layer separation.
+Finally, by invoking the recovery guarantees provided by
+the Restricted Isometry Property (RIP) [19], we establish a
+theoretical upper bound on the reconstruction error.
+We evaluate our attack across five image datasets,
+including MNIST [22], CIFAR-10 [23], ImageNet [24],
+HAM10000 [25], Lung-Colon Cancer [26], one text dataset
+(Wikitext [27]), and one audio dataset (AudioMNIST [28])
+using representative CNN and MLP architectures. Our re-
+sults demonstrate that our ARES consistently outperforms
+all state-of-the-art attacks, achieving up to 7 × improvement
+in PSNR across various datasets and batch sizes. Further-
+more, we assess the robustness of our attack under five
+defense strategies, including differential privacy (DP) [29],
+gradient quantization [30], gradient sparsification [30], data
+augmentation [31] and secure aggregation [32], [33], show-
+ing that ARES remains effective in these protected settings.
+Our key contributions can be summarized as follows:
+• We reveal the practical limitation of the existing
+active GIA lies in the unsolved challenge of inverting
+hidden activations into training samples. Based on
+the observation, we formulate the inversion task
+as a noisy sparse recovery problem and leverage
+principles from compressed sensing to solve it.
+• We propose ARES, a practical and effective ac-
+tive GIA that scales to realistic large batch sizes
+without requiring architectural modifications. ARES
+achieves this by exploiting linear layer leakage to ex-
+tract intermediate activations and leveraging sparse
+recovery techniques to reconstruct the training sam-
+ples from the extracted activations.
+• We provide a theoretical upper bound on recovery
+error and conduct extensive experiments 1 on image,
+text, and audio datasets, demonstrating that ARES
+consistently outperforms state-of-the-art attacks by
+up to 7 × in PSNR across different settings.
+2. Preliminary
+2.1. Gradient Inversion Attacks
+Passive GIAs [1]–[4], [15], [34] assume an honest-but-
+curious server or an external adversary with access to the
+model and individual gradients from each client. The at-
+tacker tries to minimize the difference between the observed
+ground-truth gradient and the gradient generated by the
+dummy sample, thereby optimizing the dummy sample to
+approximate the original input. Formally, the reconstruction
+can be formulated as
+˜x = arg min
+x
+∥∇L(x) − g∥2 , (1)
+where x is the dummy sample, ˜x is the reconstructed sample,
+L is the loss function, and g is the observed gradient.
+Recent works enhance this optimization by incorporating
+various regularizers, such as total variation (TV) [2], or
+some image priors tailored to natural image distributions [3],
+to improve visual fidelity. These methods often yield good
+reconstruction results only when the batch size is small
+and the dataset is relatively simple. However, as the batch
+size increases, gradient contributions from different samples
+become entangled, making the optimization landscape more
+complex and the reconstruction less accurate.
+By contrast, active GIAs assume a malicious server that
+can modify the model parameters or architecture to launch
+a stronger attack [5]–[8]. A commonly used strategy is
+the linear layer leakage , where if only a single sample
+x activates neuron i in an FC layer, the sample x can be
+directly revealed by solving
+x = ∂L
+∂Wi
+/ ∂L
+∂bi
+, (2)
+where ∂L
+∂Wi
+and ∂L
+∂bi
+are the gradients of the loss L with
+respect to the weight and bias for neuron i, respectively. To
+recover a batch of samples, RtF [6] introduces the imprint
+method, which encourages each sample in the batch to leave
+a distinct imprint on a specific neuron, thereby enabling
+each neuron to be reverted to reveal individual samples.
+However, this approach only enables the recovery of inputs
+fed directly into the FC layer. Consequently, reconstructing
+the original training samples requires placing the imprint
+module (the specially designed FC layer) at the beginning
+1. Our code is available at https://github.com/gongzir1/ARES.
+of the target model, leading to a non-standard architecture
+that could raise suspicion on the client side.
+Trap Weight [7] attempts to overcome this limitation
+by leveraging the existing FC layer within the network
+for training sample reconstruction, thereby eliminating the
+need for architectural modifications. It initializes the weight
+matrices of all layers preceding the FC layer to act as
+direct-pass (identity) mappings, allowing inputs to propagate
+through unchanged to the FC layer. Then, the linear layer
+leakage can directly reveal the training samples. LOKI [8]
+extends this idea and proposes an attack targeting secure
+aggregation–based FL. In this setup, each client receives
+the model with distinct parameter configurations, where a
+subset of kernels (e.g., three) is set as direct-pass mappings
+and the remaining kernels are set to zero. This client-specific
+configuration prevents weight gradient from mixing across
+clients, thereby enabling large-scale recovery. However, both
+methods are effective only when the network processes
+nonnegative inputs. Under standard settings, where inputs
+are normalized to follow N (0, 1), ReLU activations in the
+preceding layers suppress negative values, thereby breaking
+the intended identity mapping and leading to information
+loss. Scale-MIA [35] also leverages the model’s built-in
+FC layer to conduct an attack without modifying the ar-
+chitecture. However, it requires an auxiliary dataset (i.e., a
+subset of the training dataset) to train a decoder that maps
+latent representations back to the original samples, which
+limits its ability to generalize to unseen domains. Detailed
+descriptions of attacks mentioned in Table 1 are provided in
+Appendix B.2.
+2.2. Defenses Against Gradient Inversion Attacks
+Defenses against GIA can be classified into three
+main categories: gradient perturbation-based methods [29],
+[30], data augmentation-based defense [31], [36], and
+secure aggregation-based methods [32], [37]. Gradient
+perturbation-based methods modify gradients sent to the
+server to avoid directly leaking training sample-related infor-
+mation to the server. Differential privacy (DP) [29] perturbs
+ground-truth gradients by adding random noise. Gradient
+sparsification [30], [38] transmits only the most significant
+gradient elements, while gradient quantization [30] reduces
+precision by representing gradient values with fewer bits.
+Although effective, these strategies incur a trade-off between
+model utility and privacy, as more substantial modifications
+yield better protection but degrade the gradient utility.
+Data augmentation–based defenses [31], [36] apply care-
+fully chosen transformations to the training data to prevent
+adversaries from reconstructing both the augmented and
+original samples from shared gradients, while preserving
+model utility. The key idea is to disrupt the prior knowledge
+exploited by attackers, i.e., total variation or batch normal-
+ization statistics, that guides the reconstruction process.
+Secure aggregation-based methods protect user train-
+ing data by ensuring that the server can only access the
+plaintext of the aggregated gradients [32], [33]. This makes
+data reconstruction significantly more challenging, as the
+aggregated gradients correspond to a larger global batch size
+that must be recovered. Detailed descriptions of defenses are
+provided in Appendix B.3.
+2.3. Threat Model and Attack Scope
+Threat Model. We consider a malicious server that con-
+trols the FL training process and can modify the weights
+and biases of the global model before distributing them to
+clients. Unlike prior works [6], [8], the server cannot alter
+the network architecture or design a non-standard model to
+facilitate an attack. This assumption is realistic because, in
+FL, the model architecture and training protocol are typi-
+cally agreed upon in advance, and unsolicited architectural
+changes are generally rejected or detected. Given that clients
+depend on the server for model distribution and without
+insight into its internal operations, it is reasonable to treat
+the server as potentially malicious [5], [35], [39], [40]. Such
+an attack can also be executed by any party that obtains
+the server’s state, e.g., through a temporary breach [40].
+The adversary’s objective is to reconstruct as many distinct
+training examples as possible.
+Attack Scope. We evaluate attacks on two widely used
+families of models: (i) CNN-based networks, consisting of
+convolutional layers followed by fully connected layers,
+and (ii) MLP-based networks, including fully connected
+layers. We also assume that the clients’ private training
+data admits a sparse representation in a suitable domain.
+This is reasonable, as most real-world data (e.g., natural
+images, text embeddings, and audio signals) can be sparsely
+represented in suitable domains [41]–[43].
+3. Method
+3.1. Motivation
+Existing active gradient inversion attacks (aGIAs) ex-
+ploit linear layer leakage to analytically reconstruct training
+samples from the gradients of an FC layer. By configuring
+malicious parameters, the attacker aims to have each neuron
+activated by a single sample (or to imprint each neuron with
+a single sample), so that the recovery from each neuron
+directly reveals individual samples [5]–[8]. Compared to
+passive GIAs, aGIAs induce stronger privacy breaches and
+are more effective at recovering samples from large training
+batches. Despite their effectiveness, a major criticism is
+their reliance on modifying the network architecture, which
+mainly stems from two factors. First, linear layer leakage
+can only reveal the direct inputs to the FC layer. Thus,
+recovering the original training samples requires the FC
+layer to be the first layer of the model. This condition is not
+satisfied in most modern architectures, such as CNNs, which
+contain multiple convolutional layers before the FC layer. To
+address this, Trap Weight [7] proposes initializing the layer
+preceding the FC layer with a direct-pass (identity-like)
+weight matrix to avoid value distortion, thereby aligning the
+FC-layer inputs with the model’s original inputs. However,
+this approach works only for nonnegative inputs, as the
+ReLU activation zeros out negative values and results in
+information loss. Consequently, existing works typically in-
+sert a specially designed FC layer before the target network
+to enable the training sample recovery [6], [8]. Second, even
+for models where an FC layer is already the first layer
+(e.g., multi-layer perceptron–based networks), achieving a
+high recovery rate requires the number of output neurons to
+exceed the batch size [6], [8], and in practice, four times
+larger than the batch size is optimal [8]. Therefore, the
+attacker must modify the network’s dimensionality to satisfy
+this requirement.
+However, we observe that both constraints can be over-
+come by addressing the fundamental challenge of inverting
+activations into training samples. For the first constraint,
+even without model modification, we can leverage the built-
+in FC layer in standard networks to extract the individual
+activations that are fed into it. For instance, consider a layer
+l > 1 that is an FC layer in the network. If only a sin-
+gle sample activates neuron i, the corresponding activation
+h(l−1) associated with neuron i can be reconstructed as
+h(l−1) = ∂L
+∂W (l)
+i
+. ∂L
+∂b(l)
+i
+, (3)
+where ∂L
+∂W (l)
+i
+and ∂L
+∂b(l)
+i
+are the weight gradient and bias
+gradient of neuron i in layer l (see Appendix A.1 for
+a detailed derivation). Although feasible, the unresolved
+challenge lies in reconstructing the training samples from
+recovered activations. For the second constraint, which man-
+dates a large number of output neurons in the FC layer,
+this limitation can be mitigated by employing a subsequent
+FC layer to further disentangle samples that remain mixed
+in the first layer. In this case, it still need to address
+the challenge of reconstructing the training samples from
+activations (separated in the second layer).
+Motivated by the above observations, in this work, we
+focus on the problem of reconstructing training samples
+from hidden activations. To start with, we formalize the
+computation prior to layer l as
+h(l−1) = f(W x + b), (4)
+where f denotes a nonlinear transformation (caused by
+activation functions), and W and b represent the effective
+weight and bias of the linear transformation (i.e., weight and
+bias of the first layer), respectively. While this formulation
+is straightforward, inverting it to recover x is far from trivial
+for two main reasons.
+Challenges: First, the nonlinear activations in preceding
+layers render the overall transformation non-invertible, pre-
+venting exact recovery of x via a direct inverse mapping.
+Second, the linear transformation in Eq. (4) is often underde-
+termined, particularly in MLP-based networks. Specifically,
+sample features typically lie in a high-dimensional space
+(e.g., 14,784 for ImageNet), whereas the activation of the
+FC layer resides in a much lower-dimensional space. Even
+in CNN-based networks, ReLU activations preceding the
+FC layer may zero out many measurements, which discards
+ 
+Activation matching          Pseudoinverse                 Ground truth
+Figure 1: Recovery results obtained using activation match-
+ing (optimizing activation discrepancy) and pseudoinverse
+(approximating inverse).
+the information that could aid recovery. As a result, the
+number of available measurements is insufficient relative
+to the dimensionality of the target sample. Consequently,
+recovering x from h(l−1) constitutes an underdetermined
+nonlinear inversion problem.
+Solving this problem is inherently challenging. One
+possible approach is to optimize the discrepancy between
+ground-truth activations and the dummy activations to op-
+timize the dummy samples that best match the original;
+we refer to this approach as activation matching . How-
+ever, unlike traditional gradient matching, which leverages
+gradients from all layers to guide the optimization, this
+method relies solely on activations from a single layer. As
+a result, the recovery process is highly ill-posed and often
+yields a suboptimal reconstruction effect (as shown in the
+left panel of Fig. 1). Another approach involves using the
+Moore–Penrose pseudoinverse of the weight matrix to ap-
+proximate the inverse of W , and only using the linear part of
+the activation function (i.e., the region where ReLU is active
+and the output equals the input) to calculate the value of x.
+Nevertheless, because the system remains underdetermined,
+the solution is not unique; therefore, this method also fails
+to reconstruct the original samples faithfully (as shown in
+the middle panel of Fig. 1).
+3.2. Overview
+Based on the above observations, this work focuses on
+addressing the underdetermined nonlinear inversion prob-
+lem to recover training samples from activations, thereby
+enabling an effective and practical GIA. To achieve this,
+the malicious server (hereafter referred to as the attacker)
+operates in two main stages: preparation and inference,
+as illustrated in Fig. 2. During the preparation stage, the
+attacker configures the network parameters to maximize
+information leakage. Specifically, for the FC layer, it designs
+malicious weights and biases such that each neuron leaves a
+distinct imprint corresponding to a single sample, effectively
+isolating one sample per neuron. For layers preceding the
+FC layer (if any), the attacker sets the weight parameters
+to provide sufficient and non-redundant measurements, fa-
+cilitating accurate reconstruction of training samples from
+recovered activations. Once configured, the attacker sends
+malicious parameters to clients for local training.
+After clients complete local training and return their
+updates to the server, the attacker proceeds to the inference
+stage. The attacker first leverages linear layer leakage by
+using the gradients of the FC layer to recover either indi-
+vidual training samples or the activations fed into the FC
+layer. If the recovery directly yields the training samples,
+they are retained; otherwise, the attacker reconstructs the
+samples from the recovered activations. To handle the un-
+derdetermined and nonlinear nature of this reconstruction
+task, the attacker reformulates it as a noisy sparse recovery
+problem and solves it using the generalized Lasso method
+[20]. By leveraging the recovery guarantees provided by the
+Restricted Isometry Property (RIP) [19], we further derive
+a theoretical upper bound on the recovery error.
+In the following sections, we first provide an explanation
+of how to recover a single training sample from its activa-
+tion under underdetermined and nonlinear transformations
+(Section 3.3). We then extend this approach to enable the
+recovery of batches of samples (Section 3.4). Finally, we
+present attack implementations for CNN and MLP networks
+and analyze the expected recovery rate (Section 3.5).
+3.3. Noisy Sparse Recovery
+In this section, we focus on recovering a single training
+sample from activation under underdetermined and nonlin-
+ear measurement. To make the problem tractable, we first
+relax the nonlinear mapping as a noisy and scaled linear
+mapping, which is a commonly used technique in the litera-
+ture [20], [44], [45]. Specifically, we assumefi(ξ) = µξ+zi,
+where µ is a scaling factor that captures the linear com-
+ponent of the f and zi ∼ N (0, σ2) is the noise term.
+To quantify the linear component and nonlinearity of the
+function, we provide the following definition.
+Definition 1 (Linear Component and Nonlinearity of a Func-
+tion [20]) . Let f : Rd → Rk be a nonlinear function, and
+let ξ ∼ N (0, 1) be a standard Gaussian random variable.
+The effective linear component of f is defined as
+µ := 1
+k
+kX
+i=1
+E[fi(ξ)ξ], (5)
+which represents the average linear component of f across
+k dimensions. The residual nonlinearity is quantified by
+σ2 := 1
+k
+kX
+i=1
+E[(fi(ξ)−µξ)2], η 2 := 1
+k
+kX
+i=1
+E[(fi(ξ)−µξ)2ξ2],
+(6)
+which measures the variance of the nonlinear part and how
+it interacts with the input magnitude, respectively.
+Under this approximation, Eq. (4) becomes 2
+h ≈ µ(W x + b), (7)
+and the recovery problem reduces to a noisy, underde-
+termined linear inversion problem. To further handle the
+underdetermined issue, we leverage the fact that many types
+2. We omit the layer index for clarity; unless explicitly stated otherwise,
+we assume layer l is the FC layer and h is the input to layer l.
